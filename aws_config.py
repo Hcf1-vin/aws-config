@@ -21,14 +21,6 @@ def get_accounts(role_name,source_profile,session_name):
         for a in r["Accounts"]:
             aws_account = {}
 
-            for b in aws_regions:
-                if b in a["Name"]:
-                    account_region = b
-
-            for c in environments:
-                if c in a["Name"]:
-                    environment = c
-
             if a["Name"] not in [aws_profile]:
                 aws_account["id"] = a["Id"]
                 aws_account["profile_name"] = a["Name"]
