@@ -26,9 +26,8 @@ def get_accounts(role_name,source_profile,session_name,aws_region):
             for b in aws_regions:
                 if b in a["Name"]:
                     acconnt_region = b
-            
 
-            if a["Name"] not in [aws_profile]:
+            if a["Name"] not in [aws_profile] and a["Status"] != "SUSPENDED":
                 aws_account["id"] = a["Id"]
                 aws_account["profile_name"] = a["Name"]
                 aws_account["role_name"] = role_name
