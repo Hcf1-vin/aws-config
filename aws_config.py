@@ -6,7 +6,9 @@ def get_username():
     response = sts_client.get_caller_identity()
     return response["Arn"].replace("arn:aws:iam::" + response["Account"] + ":user/","")
 
-def get_accounts(role_name,source_profile,session_name):
+def get_accounts(role_name,source_profile,session_name,aws_region):
+    acconnt_region = aws_region
+    aws_regions = [region['RegionName'] for region in ec2_client.describe_regions()['Regions']]
     aws_accounts = []
     
     next_token = None
@@ -21,12 +23,18 @@ def get_accounts(role_name,source_profile,session_name):
         for a in r["Accounts"]:
             aws_account = {}
 
+            for b in aws_regions:
+                if b in a["Name"]:
+                    acconnt_region = b
+            
+
             if a["Name"] not in [aws_profile]:
                 aws_account["id"] = a["Id"]
                 aws_account["profile_name"] = a["Name"]
                 aws_account["role_name"] = role_name
                 aws_account["source_profile"] = source_profile
                 aws_account["session_name"] = session_name
+                aws_account["region"] = acconnt_region
 
                 aws_accounts.append(aws_account)
 
@@ -54,7 +62,7 @@ role_arn = arn:aws:iam::{{item.id}}:role/{{item.role_name}}
 source_profile = {{item.source_profile}}
 role_session_name = {{item.session_name}}
 region = {{item.region}}
-https://signin.aws.amazon.com/switchrole?roleName={{item.role_name}}&account={{item.profile_name}}
+# https://signin.aws.amazon.com/switchrole?roleName={{item.role_name}}&account={{item.profile_name}}
 
 {% endfor %}""")
 
@@ -100,7 +108,7 @@ def write_to_file(obj_write,output_file):
 
 if __name__ == "__main__":
     aws_profile = "default"
-    aws_region = "eu-west-2"
+    aws_region = "eu-west-1"
     aws_role = "OrganizationAccountAccessRole"
     aws_output = "json"
     file_config = "~/.aws/config"
@@ -111,7 +119,7 @@ if __name__ == "__main__":
     org_client = session.client("organizations")
     sts_client = session.client("sts")
     
-    aws_accounts = get_accounts(aws_role,aws_profile,get_username())
+    aws_accounts = get_accounts(aws_role,aws_profile,get_username(),aws_region)
 
     aws_config = build_config(aws_accounts)
 
