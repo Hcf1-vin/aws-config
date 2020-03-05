@@ -51,7 +51,7 @@ def build_default(aws_region,default_output):
 region = {{aws_region}}
 output = {{default_output}}""")
 
-    return t.render(aws_region=aws_region)
+    return t.render(aws_region=aws_region,default_output=default_output)
 
 
 def build_config(aws_accounts):
