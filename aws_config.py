@@ -28,7 +28,7 @@ def get_accounts(role_name,source_profile,session_name,aws_region):
                     acconnt_region = b
             
 
-            if a["Name"] not in [aws_profile]:
+            if a["Name"] not in [aws_profile,'my-app-1-{env_type}}-eu-west-1','my-app-2-{env_type}}-eu-west-1']:
                 aws_account["id"] = a["Id"]
                 aws_account["profile_name"] = a["Name"]
                 aws_account["role_name"] = role_name
