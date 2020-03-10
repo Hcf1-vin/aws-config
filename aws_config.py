@@ -21,6 +21,7 @@ def get_accounts(role_name,source_profile,session_name,aws_region):
             r = org_client.list_accounts()
 
         for a in r["Accounts"]:
+            print(a)
             aws_account = {}
 
             for b in aws_regions:
@@ -30,6 +31,7 @@ def get_accounts(role_name,source_profile,session_name,aws_region):
             if a["Name"] not in [aws_profile] and a["Status"] != "SUSPENDED":
                 aws_account["id"] = a["Id"]
                 aws_account["profile_name"] = a["Name"]
+                aws_account["email"] = a["Email"]
                 aws_account["role_name"] = role_name
                 aws_account["source_profile"] = source_profile
                 aws_account["session_name"] = session_name
@@ -82,6 +84,8 @@ def build_html(aws_accounts):
         </td>
         <td>url
         </td>
+        <td>email
+        </td>
     </tr>
 {% for item in items%}
     <tr>
@@ -91,6 +95,8 @@ def build_html(aws_accounts):
         </td>
         <td>
         <a href="https://signin.aws.amazon.com/switchrole?roleName={{item.role_name}}&account={{item.profile_name}}">{{item.profile_name}}</a><br>
+        </td>
+        <td>{{item.email}}
         </td>
     </tr>
 {% endfor %}
